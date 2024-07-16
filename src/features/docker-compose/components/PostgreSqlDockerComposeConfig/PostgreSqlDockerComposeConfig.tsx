@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { CircularProgress, Typography } from '@mui/material';
 import {
   downloadDockerCompose,
+  useDeleteDockerComposeMutation,
   useGetDockerComposeConfigQuery,
 } from '@features/docker-compose/api';
 import { PostgreSqlDockerComposeForm } from '@features/docker-compose/components';
@@ -23,7 +24,7 @@ export interface PostgreSqlDockerComposeConfigProps {
 export const PostgreSqlDockerComposeConfig: FC<
   PostgreSqlDockerComposeConfigProps
 > = ({ gameId, gameName }) => {
-  const { showErrorNotification } = useNotification();
+  const { showErrorNotification, showSuccessNotification } = useNotification();
 
   const {
     data: dockerComposeConfig,
@@ -31,6 +32,7 @@ export const PostgreSqlDockerComposeConfig: FC<
     isError,
     isFetching,
   } = useGetDockerComposeConfigQuery(gameId);
+  const [deleteDockerCompose] = useDeleteDockerComposeMutation();
 
   const isDockerComposeFileMissing = isNotFoundError(error);
   const postgreSqlConfig = dockerComposeConfig?.services.postgresql;
@@ -41,7 +43,14 @@ export const PostgreSqlDockerComposeConfig: FC<
     );
   };
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    deleteDockerCompose(gameId)
+      .unwrap()
+      .then(() => showSuccessNotification('Docker compose file deleted'))
+      .catch(() =>
+        showErrorNotification('Failed to delete docker compose file')
+      );
+  };
 
   const renderContent = () => {
     if (isFetching) {
@@ -66,7 +75,7 @@ export const PostgreSqlDockerComposeConfig: FC<
         )}
         <PostgreSqlDockerComposeForm
           gameId={gameId}
-          config={postgreSqlConfig}
+          config={!isDockerComposeFileMissing ? postgreSqlConfig : undefined}
         />
       </>
     );

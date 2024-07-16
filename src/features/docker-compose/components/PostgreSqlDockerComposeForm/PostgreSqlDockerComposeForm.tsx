@@ -5,7 +5,7 @@ import {
   PostgreSqlDockerComposeFormValue,
   PostgreSqlServiceConfig,
 } from '@features/docker-compose/types';
-import { useCreatePostgreSqlDockerComposeMutation } from '@features/docker-compose/api';
+import { useSavePostgreSqlDockerComposeMutation } from '@features/docker-compose/api';
 import validationSchema from './validationSchema';
 import { useNotification } from '@features/notifications/hooks';
 import { StyledTextField } from './styled';
@@ -20,7 +20,7 @@ export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
   config,
 }) => {
   const { showSuccessNotification, showErrorNotification } = useNotification();
-  const [createDockerCompose] = useCreatePostgreSqlDockerComposeMutation();
+  const [createDockerCompose] = useSavePostgreSqlDockerComposeMutation();
 
   const initialValues = useMemo(
     () => ({
@@ -32,12 +32,6 @@ export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
     }),
     [config]
   );
-
-  const hasError = (field: keyof PostgreSqlDockerComposeFormValue) =>
-    Boolean(errors[field] && touched[field]);
-
-  const getFieldError = (field: keyof PostgreSqlDockerComposeFormValue) =>
-    hasError(field) ? errors[field] : '';
 
   const {
     values,
@@ -51,7 +45,7 @@ export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
     initialValues,
     onSubmit: (values) => {
       createDockerCompose({
-        id: gameId,
+        gameId: gameId,
         request: values,
       })
         .unwrap()
@@ -63,6 +57,12 @@ export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
     validationSchema,
     enableReinitialize: true,
   });
+
+  const hasError = (field: keyof PostgreSqlDockerComposeFormValue) =>
+    Boolean(errors[field] && touched[field]);
+
+  const getFieldError = (field: keyof PostgreSqlDockerComposeFormValue) =>
+    hasError(field) ? errors[field] : '';
 
   return (
     <Box component="form" onSubmit={handleSubmit}>

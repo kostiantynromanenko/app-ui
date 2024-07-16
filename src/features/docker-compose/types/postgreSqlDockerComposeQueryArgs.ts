@@ -1,6 +1,6 @@
 import { PostgreSqlDockerComposeRequest } from './postgreSqlDockerComposeRequest.ts';
 
 export type PostgreSqlDockerComposeQueryArgs = {
-  id: string;
+  gameId: string;
   request: PostgreSqlDockerComposeRequest;
 };

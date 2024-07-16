@@ -11,6 +11,19 @@ export const dockerComposeApi = createApi({
   }),
   tagTypes: ['DockerCompose'],
   endpoints: (builder) => ({
+    savePostgreSqlDockerCompose: builder.mutation<
+      void,
+      PostgreSqlDockerComposeQueryArgs
+    >({
+      query: ({ gameId, request }) => ({
+        url: `/v1/docker-compose/${gameId}`,
+        method: 'POST',
+        body: request,
+      }),
+      invalidatesTags: (_result, _error, args) => [
+        { type: 'DockerCompose', id: args.gameId },
+      ],
+    }),
     getDockerComposeConfig: builder.query<DockerComposeFileConfig, string>({
       query: (gameId) => `/v1/docker-compose/${gameId}`,
       providesTags: (_result, _error, id) => [
@@ -20,23 +33,21 @@ export const dockerComposeApi = createApi({
         },
       ],
     }),
-    createPostgreSqlDockerCompose: builder.mutation<
-      void,
-      PostgreSqlDockerComposeQueryArgs
-    >({
-      query: ({ id, request }) => ({
-        url: `/v1/docker-compose/${id}/postgresql`,
-        method: 'POST',
-        body: request,
+    deleteDockerCompose: builder.mutation<void, string>({
+      query: (gameId) => ({
+        url: `/v1/docker-compose/${gameId}`,
+        method: 'DELETE',
       }),
-      invalidatesTags: (_result, _error, args) => [
-        { type: 'DockerCompose', id: args.id },
-      ],
+      invalidatesTags: (_result, _error, id) => {
+        console.log('id', id);
+        return [{ type: 'DockerCompose', id }];
+      },
     }),
   }),
 });
 
 export const {
   useGetDockerComposeConfigQuery,
-  useCreatePostgreSqlDockerComposeMutation,
+  useSavePostgreSqlDockerComposeMutation,
+  useDeleteDockerComposeMutation,
 } = dockerComposeApi;
