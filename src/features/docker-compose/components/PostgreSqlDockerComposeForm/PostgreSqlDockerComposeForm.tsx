@@ -5,23 +5,18 @@ import {
   PostgreSqlDockerComposeFormValue,
   PostgreSqlServiceConfig,
 } from '@features/docker-compose/types';
-import { useSavePostgreSqlDockerComposeMutation } from '@features/docker-compose/api';
 import validationSchema from './validationSchema';
-import { useNotification } from '@features/notifications/hooks';
 import { StyledTextField } from './styled';
 
 export interface DockerComposeFormProps {
-  gameId: string;
+  onSubmit: (values: PostgreSqlDockerComposeFormValue) => void;
   config?: PostgreSqlServiceConfig;
 }
 
 export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
-  gameId,
   config,
+  onSubmit,
 }) => {
-  const { showSuccessNotification, showErrorNotification } = useNotification();
-  const [createDockerCompose] = useSavePostgreSqlDockerComposeMutation();
-
   const initialValues = useMemo(
     () => ({
       username: config?.environment.POSTGRES_USER || '',
@@ -43,17 +38,7 @@ export const PostgreSqlDockerComposeForm: FC<DockerComposeFormProps> = ({
     isValid,
   } = useFormik<PostgreSqlDockerComposeFormValue>({
     initialValues,
-    onSubmit: (values) => {
-      createDockerCompose({
-        gameId: gameId,
-        request: values,
-      })
-        .unwrap()
-        .then(() => showSuccessNotification('PostgreSQL configuration saved'))
-        .catch(() =>
-          showErrorNotification('Failed to save PostgreSQL configuration')
-        );
-    },
+    onSubmit,
     validationSchema,
     enableReinitialize: true,
   });

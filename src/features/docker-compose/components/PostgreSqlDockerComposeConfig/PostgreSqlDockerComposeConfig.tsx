@@ -4,16 +4,18 @@ import {
   downloadDockerCompose,
   useDeleteDockerComposeMutation,
   useGetDockerComposeConfigQuery,
+  useSavePostgreSqlDockerComposeMutation,
 } from '@features/docker-compose/api';
 import { PostgreSqlDockerComposeForm } from '@features/docker-compose/components';
 import { isNotFoundError } from '@features/utils';
 import {
   DockerComposeFileMissingAlert,
-  PostreSqlConfigMissingAlert,
+  PostgreSqlConfigMissingAlert,
   UnexpectedErrorAlert,
 } from '../alerts';
 import { DockerComposeConfigActions } from '../DockerComposeConfigActions';
 import { useNotification } from '@features/notifications/hooks';
+import { PostgreSqlDockerComposeFormValue } from '@features/docker-compose/types';
 import { StyledContainer, StyledDescription } from './styled';
 
 export interface PostgreSqlDockerComposeConfigProps {
@@ -25,6 +27,7 @@ export const PostgreSqlDockerComposeConfig: FC<
   PostgreSqlDockerComposeConfigProps
 > = ({ gameId, gameName }) => {
   const { showErrorNotification, showSuccessNotification } = useNotification();
+  const [createDockerCompose] = useSavePostgreSqlDockerComposeMutation();
 
   const {
     data: dockerComposeConfig,
@@ -52,6 +55,18 @@ export const PostgreSqlDockerComposeConfig: FC<
       );
   };
 
+  const handleFormSubmit = (values: PostgreSqlDockerComposeFormValue) => {
+    createDockerCompose({
+      gameId: gameId,
+      request: values,
+    })
+      .unwrap()
+      .then(() => showSuccessNotification('PostgreSQL configuration saved'))
+      .catch(() =>
+        showErrorNotification('Failed to save PostgreSQL configuration')
+      );
+  };
+
   const renderContent = () => {
     if (isFetching) {
       return <CircularProgress />;
@@ -62,7 +77,7 @@ export const PostgreSqlDockerComposeConfig: FC<
     }
 
     if (!postgreSqlConfig && !isDockerComposeFileMissing) {
-      return <PostreSqlConfigMissingAlert />;
+      return <PostgreSqlConfigMissingAlert />;
     }
 
     return (
@@ -74,7 +89,7 @@ export const PostgreSqlDockerComposeConfig: FC<
           />
         )}
         <PostgreSqlDockerComposeForm
-          gameId={gameId}
+          onSubmit={handleFormSubmit}
           config={!isDockerComposeFileMissing ? postgreSqlConfig : undefined}
         />
       </>

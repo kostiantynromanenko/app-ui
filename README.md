@@ -1,30 +1,34 @@
-# React + TypeScript + Vite
+## Application - Frontend
+This is the frontend part of the system, built using Vite, React, and TypeScript. It provides a user interface to create, store, and manage game metadata, as well as manage docker-compose files for PostgreSQL databases.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Requirements
+- Node.js (v14 or later)
+- npm or Yarn
 
-Currently, two official plugins are available:
+## Dependencies
+- MongoDB
+- MinIO
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Configuration
+The application requires the following environment variables to be set:
+- `VITE_API_URL` - the URL of the backend API
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- Install the dependencies
+```bash
+npm install
+or 
+yarn install
+```
+- Start development server
+```bash
+npm run dev
+or
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Usage
+Navigate to http://localhost:5173 in your web browser.
+Use the interface to create games.
+Fill out the forms to generate and manage docker-compose files.

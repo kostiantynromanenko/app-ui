@@ -1,3 +1,3 @@
 export * from './UnexpectedErrorAlert';
-export * from './PostreSqlConfigMissingAlert';
+export * from './PostgreSqlConfigMissingAlert';
 export * from './DockerComposeFileMissingAlert';

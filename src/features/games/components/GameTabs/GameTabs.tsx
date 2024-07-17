@@ -1,5 +1,5 @@
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-import { CircularProgress, Tab, Tabs } from '@mui/material';
+import { Alert, CircularProgress, Tab, Tabs } from '@mui/material';
 import { TabPanel } from '@features/ui/components';
 import { GameTabsContainer } from './styled';
 import { PostgreSqlDockerComposeConfig } from '@features/docker-compose/components';
@@ -11,7 +11,7 @@ const a11yProps = (id: string) => ({
 });
 
 export const GameTabs: FC = () => {
-  const { data, isLoading } = useGetAllGamesQuery();
+  const { data, isLoading, isError } = useGetAllGamesQuery();
   const [selectedGameId, setSelectedGameId] = useState('');
 
   useEffect(() => {
@@ -24,8 +24,16 @@ export const GameTabs: FC = () => {
     setSelectedGameId(newValue);
   };
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return <CircularProgress />;
+  }
+
+  if (isError) {
+    return <Alert severity="error">Failed to load games</Alert>;
+  }
+
+  if (!data?.length) {
+    return <Alert severity="info">No games found. Create a game first.</Alert>;
   }
 
   return (
